@@ -5,27 +5,29 @@ from solver import Solver
 
 def get_test_info(sal_mode='e'):
     if sal_mode == 'e':
-        image_root = './data/ECSSD/Imgs/'
-        image_source = './data/ECSSD/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/ECSSD/Imgs/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/ECSSD/test.lst'
     elif sal_mode == 'p':
-        image_root = './data/PASCALS/Imgs/'
-        image_source = './data/PASCALS/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/PASCALS/Imgs/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/PASCALS/test.lst'
     elif sal_mode == 'd':
-        image_root = './data/DUTOMRON/Imgs/'
-        image_source = './data/DUTOMRON/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/DUTOMRON/Imgs/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/DUTOMRON/test.lst'
     elif sal_mode == 'h':
-        image_root = './data/HKU-IS/Imgs/'
-        image_source = './data/HKU-IS/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/HKU-IS/Imgs/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/HKU-IS/test.lst'
     elif sal_mode == 's':
-        image_root = './data/SOD/Imgs/'
-        image_source = './data/SOD/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/SOD/Imgs/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/SOD/test.lst'
     elif sal_mode == 't':
-        image_root = './data/DUTS-TE/Imgs/'
-        image_source = './data/DUTS-TE/test.lst'
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/DUTS-TE/Imgs'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/DUTS-TE/test.lst'
     elif sal_mode == 'm_r': # for speed test
-        image_root = './data/MSRA/Imgs_resized/'
-        image_source = './data/MSRA/test_resized.lst'
-
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/MSRA/Imgs_resized/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/dataset_test/MSRA/test_resized.lst'
+    elif sal_mode == 'b': # BSDS dataset for edge evaluation
+        image_root = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/HED-BSDS_PASCAL/HED-BSDS/test/'
+        image_source = 'C:/Users/paulvincentnonat/Documents/GitHub/Saliency_Dataset/HED-BSDS_PASCAL/HED-BSDS/test.lst'
     return image_root, image_source
 
 def main(config):
