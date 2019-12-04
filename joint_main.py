@@ -64,9 +64,9 @@ if __name__ == '__main__':
     parser.add_argument('--no-cuda', dest='cuda', action='store_false')
 
     # Training settings
-    parser.add_argument('--arch', type=str, default='resnet') # resnet or vgg
+    parser.add_argument('--arch', type=str, default='vgg') # resnet or vgg
     parser.add_argument('--pretrained_model', type=str, default=resnet_path)
-    parser.add_argument('--epoch', type=int, default=11)
+    parser.add_argument('--epoch', type=int, default=25)
     parser.add_argument('--batch_size', type=int, default=1) # only support 1 now
     parser.add_argument('--num_thread', type=int, default=1)
     parser.add_argument('--load', type=str, default='')
