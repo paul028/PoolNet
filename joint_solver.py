@@ -13,6 +13,9 @@ import cv2
 import math
 import time
 
+from utils import AverageMeter, VisdomLinePlotter
+
+visdom_tab_title="PoolNet-Experiment"
 
 class Solver(object):
     def __init__(self, train_loader, test_loader, config):
@@ -45,14 +48,14 @@ class Solver(object):
         self.net = build_model(self.config.arch)
         if self.config.cuda:
             self.net = self.net.cuda()
-        # self.net.train()
-        self.net.eval()  # use_global_stats = True
-        self.net.apply(weights_init)
-        if self.config.load == '':
-            self.net.base.load_pretrained_model(torch.load(self.config.pretrained_model))
-        else:
-            self.net.load_state_dict(torch.load(self.config.load))
-
+        self.net.train()
+        #self.net.eval()  # use_global_stats = True
+        #self.net.apply(weights_init)
+    #    if self.config.load == '':
+    #        self.net.base.load_pretrained_model(torch.load(self.config.pretrained_model))
+    #    else:
+    #        self.net.load_state_dict(torch.load(self.config.load))
+    #    self.net.load_state_dict(torch.load(self.config.load))
         self.lr = self.config.lr
         self.wd = self.config.wd
 
@@ -110,6 +113,7 @@ class Solver(object):
 
     # training phase
     def train(self):
+        plotter = VisdomLinePlotter(env_name=visdom_tab_title)
         iter_num = 30000 # each batch only train 30000 iters.(This number is just a random choice...)
         aveGrad = 0
         for epoch in range(self.config.epoch):
@@ -127,22 +131,24 @@ class Solver(object):
 
                 # edge part
                 edge_pred = self.net(edge_image, mode=0)
-                edge_loss_fuse = bce2d(edge_pred[0], edge_label, reduction='sum')
+                #edge_loss_fuse = bce2d(edge_pred[0], edge_label)
+                edge_loss_fuse = bce2d(edge_pred[0], edge_label)
+                print(edge_loss_fuse)
                 edge_loss_part = []
                 for ix in edge_pred[1]:
                     edge_loss_part.append(bce2d(ix, edge_label, reduction='sum'))
-                edge_loss = (edge_loss_fuse + sum(edge_loss_part)) / (self.iter_size * self.config.batch_size)
-                r_edge_loss += edge_loss.data
-
+                #edge_loss = (edge_loss_fuse + sum(edge_loss_part)) / (self.iter_size * self.config.batch_size)
+                #edge_loss = (sum(edge_loss_part)) / (self.iter_size * self.config.batch_size)
+                edge_loss = sum(edge_loss_part)/len(edge_loss_part)#(sum(edge_loss_part)) / (self.iter_size * self.config.batch_size)
+                r_edge_loss=edge_loss
                 # sal part
                 sal_pred = self.net(sal_image, mode=1)
-                sal_loss_fuse = F.binary_cross_entropy_with_logits(sal_pred, sal_label, reduction='sum')
-                sal_loss = sal_loss_fuse / (self.iter_size * self.config.batch_size)
-                r_sal_loss += sal_loss.data
+                sal_loss_fuse = F.binary_cross_entropy_with_logits(sal_pred, sal_label)
+                sal_loss = sal_loss_fuse #/ (self.iter_size * self.config.batch_size)
+                r_sal_loss=sal_loss
 
                 loss = sal_loss + edge_loss
-                r_sum_loss += loss.data
-
+                r_sum_loss=loss
                 loss.backward()
 
                 aveGrad += 1
@@ -161,6 +167,9 @@ class Solver(object):
                     print('Learning rate: ' + str(self.lr))
                     r_edge_loss, r_sal_loss, r_sum_loss= 0,0,0
 
+            plotter.plot('edge_loss','train','Balanced Binary Cross Entropy Loss',epoch+1,float(edge_loss))
+            plotter.plot('sal_loss','train','Binary Cross Entropy Loss',epoch+1,float(sal_loss))
+            plotter.plot('loss','train','',epoch+1,float(loss))
             if (epoch + 1) % self.config.epoch_save == 0:
                 torch.save(self.net.state_dict(), '%s/models/epoch_%d.pth' % (self.config.save_folder, epoch + 1))
 
@@ -170,6 +179,8 @@ class Solver(object):
 
         torch.save(self.net.state_dict(), '%s/models/final.pth' % self.config.save_folder)
 
+
+#Metrics
 def bce2d(input, target, reduction=None):
     assert(input.size() == target.size())
     pos = torch.eq(target, 1).float()
@@ -185,5 +196,4 @@ def bce2d(input, target, reduction=None):
     # target pixel = 0 -> weight 1-beta
     weights = alpha * pos + beta * neg
 
-    return F.binary_cross_entropy_with_logits(input, target, weights, reduction=reduction)
-
+    return F.binary_cross_entropy_with_logits(input, target, weights)
