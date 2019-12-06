@@ -73,7 +73,7 @@ def get_loader(config, mode='train', pin=False):
     if mode == 'train':
         shuffle = True
         dataset = ImageDataTrain(config.train_root, config.train_list, config.train_edge_root, config.train_edge_list)
-        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle, num_workers=config.num_thread, pin_memory=pin)
+        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle, num_workers=config.num_thread)
     else:
         dataset = ImageDataTest(config.test_root, config.test_list)
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle, num_workers=config.num_thread, pin_memory=pin)
